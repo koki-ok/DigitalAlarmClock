@@ -34,7 +34,7 @@ class Alarm {
     }
     
     // 0.5秒ごとに実行され条件に合えばアラームが鳴る。
-    @objc func alarmSounds(hour: Int, minute: Int, second: Int) {
+    @objc func alarmSounds(_ hour: Int, _ minute: Int, _ second: Int) {
         let date = Date()
         // ↓ アラームの指定
         let timeDesignation = calendar.date(bySettingHour: hour, minute: minute, second: second, of: date)
@@ -50,10 +50,10 @@ class Alarm {
 }
 
 let alarm = Alarm()
-let hour = 16
+let hour = 17
 let minute = 30
 let second = 0
-alarm.alarmSounds(hour: hour, minute: minute, second: second)
+alarm.alarmSounds(hour, minute, second)
 alarm.start()
 
 // 実行前に定数「hour：時間」「minute：分」「second：秒」に数値を記述する。
