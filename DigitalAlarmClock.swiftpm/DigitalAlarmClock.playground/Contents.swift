@@ -23,6 +23,7 @@ class Alarm {
     
     // タイマーのスタート
     func start() {
+        print("設定時刻「\(dateFormatter.string(from: Date()))」")
         timer = Timer.scheduledTimer(
             timeInterval: 0.5,  // 秒単位。1にすると現在時刻とタイマーが噛み合わずにならない。
             target: self,
@@ -36,13 +37,13 @@ class Alarm {
     @objc func alarmSounds() {
         let date = Date()
         // ↓ アラームの指定
-        let timeDesignation = calendar.date(bySettingHour: 14, minute: 41, second: 0, of: date)
+        let timeDesignation = calendar.date(bySettingHour: 14, minute: 56, second: 0, of: date)
         // ↓ 下２行「00:00:00」フォーマットに指定
         let currentTime = dateFormatter.string(from: date)
         let setTime = dateFormatter.string(from: timeDesignation ?? date)
         if currentTime == setTime {
             print("ジリリリリ（アラームが鳴りました。）")
-            print("現在時刻「\(currentTime)」")
+            print("アラーム時刻「\(currentTime)」")
             timer?.invalidate()
         }
     }
