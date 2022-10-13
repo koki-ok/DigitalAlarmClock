@@ -8,35 +8,52 @@ import PlaygroundSupport  // PlaygroundでTimerクラスを使用するのに必
 PlaygroundPage.current.needsIndefiniteExecution = true
 
 
+// アラーム時間の指定に使用するカレンダークラスをインスタンス化()
+let calendar = Calendar(identifier: .gregorian)
+
+
+// デジタル時計と仮定しているので「00:00:00」のフォーマットを指定
+let dateFormatter = DateFormatter()
+dateFormatter.dateStyle = .none
+dateFormatter.timeStyle = .medium
+dateFormatter.locale = Locale(identifier: "ja_JP")
+
 class Alarm {
     var timer: Timer?
-    var count: Int = 0
-    var limit: Int = 5
     
+    // タイマーのスタート
     func start() {
-        // 任意の箇所でTimerクラスを使用して1秒毎にcountup()メソッドを実行させるタイマーをセット
+        print("設定時刻「\(dateFormatter.string(from: Date()))」")
         timer = Timer.scheduledTimer(
-            timeInterval: 1, // タイマーの実行間隔を指定(単位はn秒)
-            target: self, // ここは「self」でOK
-            selector: #selector(countup), // timeInterval毎に実行するメソッドを指定
-            userInfo: nil, // ここは「nil」でOK
-            repeats: true // 繰り返し処理を実行したいので「true」を指定
+            timeInterval: 0.5,  // 秒単位。1にすると現在時刻とタイマーが噛み合わずにならない。
+            target: self,
+            selector: #selector(alarmSounds),
+            userInfo: nil,
+            repeats: true
         )
     }
-
-    // Timerクラスに設定するメソッドは「@objc」キワードを忘れずに付与する
-    @objc func countup() {
-        // countの値をインクリメントする
-        count += 1
-        print("カウントは\(count)です")
-        // countの値がlimitの値以上になったif文を実行
-        if limit <= count {
-            print("ジリリリリ！(カウントをストップします)")
-            // タイマーを止める
+    
+    // 0.5秒ごとに実行され条件に合えばアラームが鳴る。
+    @objc func alarmSounds(_ hour: Int, _ minute: Int, _ second: Int) {
+        let date = Date()
+        // ↓ アラームの指定
+        let timeDesignation = calendar.date(bySettingHour: hour, minute: minute, second: second, of: date)
+        // ↓ 下２行「00:00:00」フォーマットに指定
+        let currentTime = dateFormatter.string(from: date)
+        let setTime = dateFormatter.string(from: timeDesignation ?? date)
+        if currentTime == setTime {
+            print("ジリリリリ（アラームが鳴りました。）")
+            print("アラーム時刻「\(currentTime)」")
             timer?.invalidate()
         }
     }
 }
 
 let alarm = Alarm()
+let hour = 17
+let minute = 30
+let second = 0
+alarm.alarmSounds(hour, minute, second)
 alarm.start()
+
+// 実行前に定数「hour：時間」「minute：分」「second：秒」に数値を記述する。
