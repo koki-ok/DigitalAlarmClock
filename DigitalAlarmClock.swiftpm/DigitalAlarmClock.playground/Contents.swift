@@ -16,19 +16,6 @@ dateFormatter.dateStyle = .none
 dateFormatter.timeStyle = .medium
 dateFormatter.locale = Locale(identifier: "ja_JP")
 
-let date = Date()
-// ↓ アラームの指定
-let timeDesignation = calendar.date(bySettingHour: 13, minute: 31, second: 0, of: date)
-// ↓ 下２行「00:00:00」フォーマットに指定
-let currentTime = dateFormatter.string(from: date)
-let setTime = dateFormatter.string(from: timeDesignation ?? date)
-
-
-
-
-
-
-
 
 class Alarm {
     var timer: Timer?
@@ -40,21 +27,24 @@ class Alarm {
         timer = Timer.scheduledTimer(
             timeInterval: 1, // タイマーの実行間隔を指定(単位はn秒)
             target: self, // ここは「self」でOK
-            selector: #selector(countup), // timeInterval毎に実行するメソッドを指定
+            selector: #selector(alarmSounds), // timeInterval毎に実行するメソッドを指定
             userInfo: nil, // ここは「nil」でOK
             repeats: true // 繰り返し処理を実行したいので「true」を指定
         )
     }
 
     // Timerクラスに設定するメソッドは「@objc」キワードを忘れずに付与する
-    @objc func countup() {
-        // countの値をインクリメントする
-        count += 1
-        print("カウントは\(count)です")
-        // countの値がlimitの値以上になったif文を実行
-        if limit <= count {
-            print("ジリリリリ！(カウントをストップします)")
-            // タイマーを止める
+    // 0.5秒ごとに実行され条件に合えばアラームが鳴る。
+    @objc func alarmSounds() {
+        let date = Date()
+        // ↓ アラームの指定
+        let timeDesignation = calendar.date(bySettingHour: 13, minute: 31, second: 0, of: date)
+        // ↓ 下２行「00:00:00」フォーマットに指定
+        let currentTime = dateFormatter.string(from: date)
+        let setTime = dateFormatter.string(from: timeDesignation ?? date)
+        if currentTime == setTime {
+            print("ジリリリリ（アラームが鳴りました。）")
+            print("現在時刻「\(currentTime)」")
             timer?.invalidate()
         }
     }
@@ -62,3 +52,4 @@ class Alarm {
 
 let alarm = Alarm()
 alarm.start()
+// 実行前にalarmSoundsメソッドのtimeDesignationに設定時間を記述する。
