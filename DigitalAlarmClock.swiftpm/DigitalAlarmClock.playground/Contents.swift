@@ -8,41 +8,31 @@ import PlaygroundSupport  // PlaygroundでTimerクラスを使用するのに必
 PlaygroundPage.current.needsIndefiniteExecution = true
 
 
-// アラーム時間の指定に使用するカレンダークラスをインスタンス化()
-let calendar = Calendar(identifier: .gregorian)
-
-
-// デジタル時計と仮定しているので「00:00:00」のフォーマットを指定
-let dateFormatter = DateFormatter()
-dateFormatter.dateStyle = .none
-dateFormatter.timeStyle = .medium
-dateFormatter.locale = Locale(identifier: "ja_JP")
-
 class Alarm {
     var timer: Timer?
+    var count: Int = 0
+    var limit: Int = 5
     
-    // タイマーのスタート
     func start() {
+        // 任意の箇所でTimerクラスを使用して1秒毎にcountup()メソッドを実行させるタイマーをセット
         timer = Timer.scheduledTimer(
-            timeInterval: 0.5,  // 秒単位。1にすると現在時刻とタイマーが噛み合わずにならない。
-            target: self,
-            selector: #selector(alarmSounds),
-            userInfo: nil,
-            repeats: true
+            timeInterval: 1, // タイマーの実行間隔を指定(単位はn秒)
+            target: self, // ここは「self」でOK
+            selector: #selector(countup), // timeInterval毎に実行するメソッドを指定
+            userInfo: nil, // ここは「nil」でOK
+            repeats: true // 繰り返し処理を実行したいので「true」を指定
         )
     }
-    
-    // 0.5秒ごとに実行され条件に合えばアラームが鳴る。
-    @objc func alarmSounds() {
-        let date = Date()
-        // ↓ アラームの指定
-        let timeDesignation = calendar.date(bySettingHour: 13, minute: 31, second: 0, of: date)
-        // ↓ 下２行「00:00:00」フォーマットに指定
-        let currentTime = dateFormatter.string(from: date)
-        let setTime = dateFormatter.string(from: timeDesignation ?? date)
-        if currentTime == setTime {
-            print("ジリリリリ（アラームが鳴りました。）")
-            print("現在時刻「\(currentTime)」")
+
+    // Timerクラスに設定するメソッドは「@objc」キワードを忘れずに付与する
+    @objc func countup() {
+        // countの値をインクリメントする
+        count += 1
+        print("カウントは\(count)です")
+        // countの値がlimitの値以上になったif文を実行
+        if limit <= count {
+            print("ジリリリリ！(カウントをストップします)")
+            // タイマーを止める
             timer?.invalidate()
         }
     }
