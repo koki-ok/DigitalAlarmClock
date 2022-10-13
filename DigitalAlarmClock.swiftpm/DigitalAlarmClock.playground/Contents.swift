@@ -7,6 +7,28 @@ import PlaygroundSupport  // PlaygroundでTimerクラスを使用するのに必
 // 「needsIndefiniteExecution」無期限実行が有効かどうかをBool値で示す
 PlaygroundPage.current.needsIndefiniteExecution = true
 
+// アラーム時間の指定に使用するカレンダークラスをインスタンス化()
+let calendar = Calendar(identifier: .gregorian)
+
+// デジタル時計と仮定しているので「00:00:00」のフォーマットを指定
+let dateFormatter = DateFormatter()
+dateFormatter.dateStyle = .none
+dateFormatter.timeStyle = .medium
+dateFormatter.locale = Locale(identifier: "ja_JP")
+
+let date = Date()
+// ↓ アラームの指定
+let timeDesignation = calendar.date(bySettingHour: 13, minute: 31, second: 0, of: date)
+// ↓ 下２行「00:00:00」フォーマットに指定
+let currentTime = dateFormatter.string(from: date)
+let setTime = dateFormatter.string(from: timeDesignation ?? date)
+
+
+
+
+
+
+
 
 class Alarm {
     var timer: Timer?
